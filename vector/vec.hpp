@@ -1,17 +1,17 @@
 #pragma once
 
 #include <math.h>
-#include <ostream>
+#include <iostream>
 
 template <int rows, typename T = double>
-struct Vec
+struct Vector
 {
-    Vec() {}
+    Vector() {}
 
-	Vec(std::initializer_list<T> list) {
+	Vector(std::initializer_list<T> list) {
 		for(int i=0; const auto& l: list) {
             if (i == rows) {
-                throw "Extra elements were provided to Vec";
+                throw "Extra elements were provided to Vector";
             }
 			m_data[i] = l;
 			++i;
@@ -52,14 +52,14 @@ struct Vec
 		return rows;
 	}
 
-	Vec& operator=(const Vec& other) {
+	Vector& operator=(const Vector& other) {
 		for(int i=0; i<length(); ++i) {
 			m_data[i] = other[i];
 		}
 		return *this;
 	}
 
-	Vec operator-() const {
+	Vector operator-() const {
 		auto vec{*this};
 		for(int i=0; i<length(); ++i) {
 			vec[i] = -m_data[i];
@@ -67,28 +67,28 @@ struct Vec
 		return vec;
 	}
 
-	Vec& operator+=(const Vec& other) {
+	Vector& operator+=(const Vector& other) {
 		for(int i=0; i<length(); ++i) {
 			m_data[i] += other[i];
 		}
 		return *this;
 	}
 
-	Vec operator+(const Vec& other) const {
+	Vector operator+(const Vector& other) const {
 		auto vec{*this};
 		return vec+=other;
 	}
 
-	Vec& operator-=(const Vec& other) {
+	Vector& operator-=(const Vector& other) {
 		return (*this) += -other;
 	}
 
-	Vec operator-(const Vec& other) const {
+	Vector operator-(const Vector& other) const {
 		auto vec{*this};
 		return vec + (-other);
 	}
 
-	Vec operator*(const T& val) const {
+	Vector operator*(const T& val) const {
 		auto vec{*this};
 		for(int i=0; i<length(); ++i) {
 			vec[i] *= val;
@@ -96,25 +96,25 @@ struct Vec
 		return vec;
 	}
 
-	Vec& operator*=(const Vec& other) {
+	Vector& operator*=(const Vector& other) {
 		for(int i=0; i<length(); ++i) {
 			m_data[i] *= other[i];
 		}
 		return *this;
 	}
 
-	Vec operator*(const Vec& other) const {
+	Vector operator*(const Vector& other) const {
 		auto vec{*this};
 		return vec*=other;
 	}
 
-	Vec operator/(const T& val) const {
+	Vector operator/(const T& val) const {
 		if(val == 0)
 			std::runtime_error("divisibility by 0.");
 		return (*this) * (1/val);
 	}
 
-	T dot(const Vec& other) const {
+	T dot(const Vector& other) const {
 		T sum = 0;
 		for(int i=0; i<length(); ++i) {
 			sum += m_data[i] * other[i];
@@ -138,7 +138,7 @@ struct Vec
 		(((*this)[index] = getMagnitude() * elems, ++index), ...);
 	}
 
-	void setDirection(const Vec<rows>& vec) {
+	void setDirection(const Vector<rows>& vec) {
 		*this = getMagnitude() * vec;
 	}
 
@@ -146,7 +146,7 @@ struct Vec
 		return sqrt(dot(*this));
 	}
 
-	Vec<rows> getDirection() const {
+	Vector<rows> getDirection() const {
 		return (*this)/getMagnitude();
 	}
 
@@ -155,7 +155,7 @@ private:
 };
 
 template <int rows, typename T>
-std::ostream& operator<<(std::ostream& out, const Vec<rows, T>& vec)
+std::ostream& operator<<(std::ostream& out, const Vector<rows, T>& vec)
 {
 	std::cout << '|';
 	for(int i=0; i<rows; ++i) {
@@ -166,3 +166,22 @@ std::ostream& operator<<(std::ostream& out, const Vec<rows, T>& vec)
 	std::cout << '|';
 	return out;
 }
+
+template <typename T = double>
+struct Vector2 : public Vector<2, T> {
+    
+    T& x;
+    T& y;     
+
+    Vector2(T _x = 0, T _y = 0)
+    : x{(*this)[0]}, y{(*this)[1]} {
+        x = _x;
+        y = _y;
+    }
+
+    Vector2& operator=(const Vector2<T>& vec) {
+        x = vec.x;
+        y = vec.y;
+        return (*this);
+    }
+};
