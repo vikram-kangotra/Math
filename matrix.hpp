@@ -81,6 +81,14 @@ class Matrix<T, 0, 0> : public BaseMatrix<T>, public MatrixOperation<Matrix<T>, 
         , MatrixOperation<Matrix<T>, T>{this}
         , mData{std::make_unique<T[]>(rows * cols)} {}
 
+        Matrix(const Matrix& other)
+        : Matrix(other.rows(), other.cols()) {
+            for (size_t index = 0; auto m : other) {
+                mData[index] = m;
+                ++index;
+            }
+        }
+
         T& get(size_t index) { return mData[index]; }
         const T& get(size_t index) const { return mData[index]; }
 
@@ -165,8 +173,8 @@ namespace {
             GenMatrix transpose() {
                 GenMatrix matrix{mMatrix};
                 matrix.swapDimension();
-                for (auto i = 0; i < matrix.rows(); ++i) {
-                    for (auto j = 0; j < matrix.cols(); ++j) {
+                for (size_t i = 0; i < matrix.rows(); ++i) {
+                    for (size_t j = 0; j < matrix.cols(); ++j) {
                         if ( i == j )
                             continue;
                         matrix[i][j] = mMatrix[j][i];
@@ -270,7 +278,7 @@ namespace {
                 }
                 T answer{};
 
-                for (auto i = 0; i < mMatrix.rows(); ++i) {
+                for (size_t i = 0; i < mMatrix.rows(); ++i) {
                     answer += getSign(0,i) * mMatrix[0][i] * getMatrixPart(0,i).determinant();
                 }
                 return answer;
@@ -298,8 +306,8 @@ namespace {
             auto getMatrixPart(size_t rows, size_t cols) const {
                 Matrix<T> matrix{mMatrix.rows() - 1, mMatrix.cols() - 1};
 
-                for (auto i = 0; i < mMatrix.rows(); ++i) {
-                    for (auto j = 0; j < mMatrix.cols(); ++j) {
+                for (size_t i = 0; i < mMatrix.rows(); ++i) {
+                    for (size_t j = 0; j < mMatrix.cols(); ++j) {
                         if (i == rows || j == cols)
                             continue;
                         matrix[i - (i>rows)][j - (j>cols)] = mMatrix[i][j];
